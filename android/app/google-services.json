@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "326961528037",
+    "project_id": "ahamard-project",
+    "storage_bucket": "ahamard-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:326961528037:android:46c798ace0eca6d367680c",
+        "android_client_info": {
+          "package_name": "com.example.ahmad_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZyZADgA1AxvXY00YqmeV9cQaNORnz8ig"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

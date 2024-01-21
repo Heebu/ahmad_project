@@ -1,9 +1,11 @@
 import 'package:ahmad_project/Reuseables/snack_bars.dart';
+import 'package:ahmad_project/Service/FireBase/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
 class LoginViewModel extends BaseViewModel {
   //final AuthenticationService _authService;
+  bool isLoading = false;
 
   String _email = '';
   String _password = '';
@@ -16,20 +18,30 @@ class LoginViewModel extends BaseViewModel {
 
   void updatePassword(String value) => _password = value;
 
-  void login(context) {
-    if (_email.isNotEmpty || _password.isNotEmpty || _password.length > 7) {
-      Navigator.pushReplacementNamed(context, '/home');
+  void login(context) async {
+    isLoading = true;
+    if (email.isNotEmpty || password.isNotEmpty) {
+      try {
+        String result =
+            await FirebaseAuths().firebaseSignIn(email.trim(), password.trim());
+        if (result == 'success') {
+          isLoading = false;
+          Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          showSnackBar(context, result);
+          isLoading = false;
+        }
+        isLoading = false;
+      } catch (e) {
+        isLoading = false;
+        showSnackBar(context, e.toString());
+      }
     } else {
+      isLoading = false;
       showSnackBar(context, 'Please fill all fields.');
     }
-
-    // try {
-    //   await _authService.signInWithEmailAndPassword(_email, _password);
-    //   // Navigate to your main app screen
-    // } on FirebaseAuthException catch (error) {
-    //   // Handle Firebase authentication errors
-    //   notifyListeners();
-    // }
+    isLoading = false;
+    notifyListeners();
   }
 
   void resetPassword(context) {

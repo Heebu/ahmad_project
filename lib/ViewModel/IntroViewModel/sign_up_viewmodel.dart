@@ -1,46 +1,68 @@
+import 'package:ahmad_project/Reuseables/snack_bars.dart';
+import 'package:ahmad_project/Service/FireBase/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
+import '../../Reuseables/image_pick.dart';
+
 class SignupViewModel extends BaseViewModel {
-  //final AuthenticationService _authService;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController stateController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+  String image = '';
+  bool isLoading = false;
 
-  String _email = '';
-  String _password = '';
-  String _name = '';
-  String _phone = '';
-
-  String get email => _email;
-
-  String get password => _password;
-
-  String get name => _name;
-
-  String get phone => _phone;
-
-  void updateEmail(String value) => _email = value;
-
-  void updatePassword(String value) => _password = value;
-
-  void updateName(String value) => _name = value;
-
-  void updatePhone(String value) => _phone = value;
+  void imagePicked(context) async {
+    String? imageUsed = await uploadImageToFirebase(context);
+    if (imageUsed != null) {
+      image = imageUsed;
+      notifyListeners();
+    }
+  }
 
   Future<void> signup(context) async {
-    if (_email.isEmpty ||
-        _password.isEmpty ||
-        _name.isEmpty ||
-        _phone.isEmpty) {
-      throw Exception('Please fill all fields.');
-    }
-    Navigator.pushReplacementNamed(context, '/home');
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+    String firstName = firstNameController.text.trim();
+    String lastName = lastNameController.text.trim();
+    String phoneNumber = phoneNumberController.text.trim();
+    String state = stateController.text.trim();
+    String confirmPassword = confirmPasswordController.text.trim();
 
-    //   try {
-    //     await _authService.createUserWithEmailAndPassword(_email, _password);
-    //     // Save additional user details to your database
-    //     // Navigate to your main app screen
-    //   } on FirebaseAuthException catch (error) {
-    //     // Handle Firebase authentication errors
-    //     notifyListeners();
-    //   }
+    if (email.isEmpty ||
+        password.isEmpty ||
+        firstName.isEmpty ||
+        lastName.isEmpty ||
+        password.isEmpty ||
+        state.isEmpty) {
+      showSnackBar(context, 'Please fill all fields.');
+    } else if (password != confirmPassword) {
+      showSnackBar(context, 'Please retype the pass words to match');
+    } else {
+      isLoading = true;
+      try {
+        String result = await FirebaseAuths().firebaseSignUp(email, password);
+        if (result == 'success') {
+          String newResult = await FirebaseAuths()
+              .storeUserInfo(firstName, lastName, phoneNumber, image, state);
+          if (newResult == 'success') {
+            Navigator.pushReplacementNamed(context, '/home');
+            isLoading = false;
+          }
+          showSnackBar(context, result);
+          isLoading = false;
+        } else {
+          showSnackBar(context, result);
+          isLoading = false;
+        }
+      } catch (e) {
+        showSnackBar(context, e.toString());
+        isLoading = false;
+      }
+    }
   }
 }

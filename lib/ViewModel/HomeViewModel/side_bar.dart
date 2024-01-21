@@ -1,44 +1,76 @@
+import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
-import '../../Model/sign_up_model.dart';
+import '../../Model/users_model.dart';
+import '../../Reuseables/image_pick.dart';
+import '../../Service/FireBase/firebase_auth.dart';
+import '../../Service/FireBase/get_details.dart';
+import '../../Views/Home/SideBar/profile.view.dart';
 
 class ProfileViewModel extends BaseViewModel {
-  //final UserService _userService;
+  String name = '';
+  late UsersModel _user;
+  String image = '';
 
-  late User _user;
+  UsersModel get user => _user;
 
-  User? get user => _user;
+  Future<UsersModel> getUserProfile() async {
+    String firstname = await getUserDetails('firstName');
+    String lastName = await getUserDetails('lastName');
+    image = await getUserDetails('image');
+    String phone = await getUserDetails('phoneNumber');
+    String state = await getUserDetails('addressLocation');
+    String? email = FirebaseAuths().userEmail;
+    name = '$firstname $lastName';
 
-  Future<User> getUserProfile() async {
-    User users = User(
-        email: 'ayblazz@gmail.com',
-        password: '123456789',
-        name: 'Adedeji Idris',
-        phone: '08112006431');
-    // if (_user == null) {
-    //   _user = await _userService.getCurrentUser();
-    //   notifyListeners();
-    // }
+    UsersModel users = UsersModel(
+        email: email ?? '',
+        firstName: firstname ?? '',
+        lastName: lastName ?? '',
+        phone: phone ?? '',
+        state: state ?? '',
+        image: image ?? '');
     return users;
   }
 
-  void navigateToProfileEdit() {
+  void navigateToProfileEdit(context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ProfileView(),
+        ));
     // Navigate to ProfileEditView
   }
 
-  void navigateToSettings() {
-    // Navigate to SettingsView
+  imagePic(context) async {
+    String? newImage = await uploadImageToFirebase(context);
+    if (newImage != null) {
+      image = newImage;
+    }
+    notifyListeners();
   }
 
-  void navigateToHelp() {
-    // Navigate to HelpView
+  void navigateToScreen(context, widget) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => widget,
+        ));
   }
 
-  void navigateToAbout() {
-    // Navigate to AboutView
-  }
-
-  void navigateToFAQ() {
-    // Navigate to FAQView
+  void logOutFunction(context) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text('Log Out'),
+              content: Text('Would you like to log out from this account?'),
+              actions: [
+                ElevatedButton(
+                    onPressed: () {
+                      FirebaseAuths().firebaseSignOut(context);
+                    },
+                    child: Text('Out'))
+              ],
+            ));
   }
 }

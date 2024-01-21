@@ -9,7 +9,7 @@ import '../Views/IntroScreenView/reset_password_view.dart';
 
 final Map<String, WidgetBuilder> routes = {
   '/': (context) => const FancySplashScreen(),
-  '/home': (context) => const HomeView(),
+  '/home': (context) => const HomePageView(),
   '/intro': (context) => const IntroView(),
   '/login': (context) => const LoginView(),
   '/signup': (context) => const SignupView(),

@@ -1,9 +1,18 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'Reuseables/routes.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+        apiKey: 'AIzaSyBZyZADgA1AxvXY00YqmeV9cQaNORnz8ig',
+        appId: '1:326961528037:android:46c798ace0eca6d367680c',
+        messagingSenderId: '326961528037',
+        projectId: 'ahamard-project'),
+  );
   runApp(const MyApp());
 }
 

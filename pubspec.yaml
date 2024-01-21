@@ -38,6 +38,14 @@ dependencies:
   stacked:
   flutter_screenutil:
   lottie:
+  firebase_core:
+  firebase_auth:
+  firebase_storage:
+  cloud_firestore:
+  google_sign_in:
+  image_picker:
+  url_launcher:
+  flutter_paystack: ^1.0.7
 
 dev_dependencies:
   flutter_test:
